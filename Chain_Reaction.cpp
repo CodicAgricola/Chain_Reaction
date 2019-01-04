@@ -1,132 +1,21 @@
 class Student{
     public:
-        void makeMove(int Record[5][6], int Max[5][6], Color color[5][6], Color inputColor){
-            // Your Code
-            if(moveCorner(Record, Max, color, inputColor)) return;
-            if(moveEdge(Record, Max, color, inputColor)) return;
-            if(addCell(Record, Max, color, inputColor)) return;
-            if(moveCell(Record, Max, color, inputColor)) return;
-            if(addEdge(Record, Max, color, inputColor)) return;
-            if(addCorner(Record, Max, color, inputColor)) return;
-            return;
-        }
-        bool moveCorner(int Record[5][6], int Max[5][6], Color color[5][6], Color inputColor) {
-    if(color[0][0] == White) {
-        x = 0;
-        y = 0;
-        return true;
-    } else if(color[0][5] == White) {
-        x = 0;
-        y = 5;
-        return true;
-    } else if(color[4][5] == White) {
-        x = 4;
-        y = 5;
-        return true;
-    } else if(color[4][0] == White) {
-        x = 4;
-        y = 0;
-        return true;
-    } else return false;
-}
+        int Score[5][6];
 
-bool addCorner(int Record[5][6], int Max[5][6], Color color[5][6], Color inputColor) {
-    if(color[0][0] == White || color[0][0] == inputColor) {
-        x = 0;
-        y = 0;
-        return true;
-    } else if(color[0][5] == White || color[0][5] == inputColor) {
-        x = 0;
-        y = 5;
-        return true;
-    } else if(color[4][5] == White || color[4][5] == inputColor) {
-        x = 4;
-        y = 5;
-        return true;
-    } else if(color[4][0] == White || color[4][0] == inputColor) {
-        x = 4;
-        y = 0;
-        return true;
-    } else return false;
-}
+        Color counter(Color inputColor);
 
-bool moveEdge(int Record[5][6], int Max[5][6], Color color[5][6], Color inputColor) {
-    for(int i = 1; i<5; i++) {
-        if(color[0][i] == White) {
-            x = 0;
-            y = i;
-            return true;
-        } else if(color[4][i] == White) {
-            x = 4;
-            y = i;
-            return true;
-        }
-    }
-    for(int i = 1; i<4; i++) {
-        if(color[i][0] == White) {
-            x = i;
-            y = 0;
-            return true;
-        } else if(color[i][4] == White) {
-            x = i;
-            y = 4;
-            return true;
-        }
-    }
-    return false;
-}
+        bool valid(int x, int y);
 
-bool addEdge(int Record[5][6], int Max[5][6], Color color[5][6], Color inputColor) {
-    for(int i = 1; i<5; i++) {
-        if(color[0][i] == White || color[0][i] == inputColor) {
-            x = 0;
-            y = i;
-            return true;
-        } else if(color[4][i] == White || color[4][i] == inputColor) {
-            x = 4;
-            y = i;
-            return true;
-        }
-    }
-    for(int i = 1; i<4; i++) {
-        if(color[i][0] == White || color[i][0] == inputColor) {
-            x = i;
-            y = 0;
-            return true;
-        } else if(color[i][4] == White || color[i][4] == inputColor) {
-            x = i;
-            y = 4;
-            return true;
-        }
-    }
-    return false;
-}
+        int diagnalCritical(int x, int y, int Record[5][6], int Max[5][6], Color color[5][6], Color inputColor, Color counterColor);
 
-bool moveCell(int Record[5][6], int Max[5][6], Color color[5][6], Color inputColor) {
-    for(int i = 1; i<4; i++) {
-        for(int j = 1; j<5; j++) {
-            if(color[i][j] == White) {
-                x = i;
-                y = j;
-                return true;
-            }
-        }
-    }
-    return false;
-}
+        int diagnalEvaluate(int x, int y, int Record[5][6], int Max[5][6], Color color[5][6], Color inputColor, Color counterColor);
 
-bool addCell(int Record[5][6], int Max[5][6], Color color[5][6], Color inputColor) {
-    for(int i = 1; i<4; i++) {
-        for(int j = 1; j<5; j++) {
-            if(color[i][j] == White || color[i][j] == inputColor) {
-                x = i;
-                y = j;
-                return true;
-            }
-        }
-    }
-    return false;
-}
+        int surroundCritical(int x, int y, int Record[5][6], int Max[5][6], Color color[5][6], Color inputColor, Color counterColor);
+
+        int surroundEvaluate(int x, int y, int Record[5][6], int Max[5][6], Color color[5][6], Color inputColor, Color counterColor);
+
+        void makeMove(int Record[5][6], int Max[5][6], Color color[5][6], Color inputColor);
+
         // Any Code You Want to Add
         int getX(){
             // Your Code
@@ -141,3 +30,154 @@ bool addCell(int Record[5][6], int Max[5][6], Color color[5][6], Color inputColo
         int y;
     };
 
+Color Student::counter(Color inputColor) {
+    if(inputColor == Blue) return Red;
+    else return Blue;
+}
+
+bool Student::valid(int x, int y) {
+    return (x >= 0 && x < 5 && y >= 0 && y < 6);
+}
+
+int Student::diagnalEvaluate(int x, int y, int Record[5][6], int Max[5][6], Color color[5][6], Color inputColor, Color counterColor) {
+    int score = 0;
+    int weight;
+     if(valid(x - 1, y - 1)) {
+        if(color[x - 1][y - 1] == counterColor) {
+            weight = ( (Max[x - 1][y - 1] - Record[x - 1][y - 1) - (Max[x][y] - Record[x][y]) );
+            if(weight < 0) score -= 5;
+            else score += (4 - weight);
+        }
+    }
+    if(valid(x + 1, y - 1)) {
+        if(color[x + 1][y - 1] == counterColor) {
+            weight = ( (Max[x + 1][y - 1] - Record[x + 1][y - 1]) - (Max[x][y] - Record[x][y]) );
+            if(weight < 0) score -= 5;
+            else score += (4 - weight);
+        }
+    }
+    if(valid(x - 1, y + 1)) {
+        if(color[x - 1][y + 1] == counterColor) {
+            weight = ( (Max[x - 1][y + 1] - Record[x - 1][y + 1]) - (Max[x][y] - Record[x][y]) );
+            if(weight < 0) score -= 5;
+            else score += weight;
+        }
+    }
+    if(valid(x + 1, y + 1)) {
+        if(color[x + 1][y + 1] == counterColor) {
+            weight = ( (Max[x + 1][y + 1] - Record[x + 1][y + 1]) - (Max[x][y] - Record[x][y]) );
+            if(weight < 0) score -= 5;
+            else score += weight;
+        }
+    }
+
+    return score;
+}
+
+int Student::surroundEvaluate(int x, int y, int Record[5][6], int Max[5][6], Color color[5][6], Color inputColor, Color counterColor) {
+    int score = 0;
+    int weight;
+     if(valid(x - 1, y)) {
+        if(color[x - 1][y] == counterColor) {
+            weight = ( (Max[x - 1][y] - Record[x - 1][y]) - (Max[x][y] - Record[x][y]) );
+            if(weight < 0) score -= 5;
+            else score += (4 - weight);
+        }
+    }
+    if(valid(x + 1, y)) {
+        if(color[x + 1][y] == counterColor) {
+            weight = ( (Max[x + 1][y] - Record[x + 1][y]) - (Max[x][y] - Record[x][y]) );
+            if(weight < 0) score -= 5;
+            else score += (4 - weight);
+        }
+    }
+    if(valid(x, y - 1)) {
+        if(color[x][y - 1] == counterColor) {
+            weight = ( (Max[x][y - 1] - Record[x][y - 1]) - (Max[x][y] - Record[x][y]) );
+            if(weight < 0) score -= 5;
+            else score += weight;
+        }
+    }
+    if(valid(x, y + 1)) {
+        if(color[x][y + 1] == counterColor) {
+            weight = ( (Max[x][y + 1] - Record[x][y + 1]) - (Max[x][y] - Record[x][y]) );
+            if(weight < 0) score -= 5;
+            else score += weight;
+        }
+    }
+
+    return score;
+}
+
+int Student::diagnalCritical(int x, int y, int Record[5][6], int Max[5][6], Color colo[5][6], Color inputColor, Color counterColor) {
+    int sum = 0;
+    if(valid(x - 1, y - 1)) { // up is a critical enemy
+        if(color[x - 1][y - 1] == counterColor && Record[x - 1][y - 1] == (Max[x - 1][y] - 1) ) sum++;
+    }
+    if(valid(x + 1, y - 1)) {
+        if(color[x + 1][y - 1] == counterColor && Record[x + 1][y - 1] == (Max[x + 1][y - 1] - 1) ) sum++;
+    }
+    if(valid(x - 1, y + 1)) {
+        if(color[x - 1][y + 1] == counterColor && Record[x - 1][y + 1] == (Max[x - 1][y + 1] - 1) ) sum++;
+    }
+    if(valid(x + 1, y + 1)) {
+        if(color[x + 1][y + 1] == counterColor && Record[x + 1][y + 1] == (Max[x + 1][y + 1] - 1) ) sum++;
+    }
+
+    return sum;
+}
+
+int Student::surroundCritical(int x, int y, int Record[5][6], int Max[5][6], Color color[5][6], Color inputColor, Color counterColor) {
+    int sum = 0;
+    if(valid(x - 1, y)) { // up is a critical enemy
+        if(color[x - 1][y] == counterColor && Record[x - 1][y] == (Max[x - 1][y] - 1) ) sum++;
+    }
+    if(valid(x + 1, y)) {
+        if(color[x + 1][y] == counterColor && Record[x + 1][y] == (Max[x + 1][y] - 1) ) sum++;
+    }
+    if(valid(x, y - 1)) {
+        if(color[x][y - 1] == counterColor && Record[x][y - 1] == (Max[x][y - 1] - 1) ) sum++;
+    }
+    if(valid(x, y + 1)) {
+        if(color[x][y + 1] == counterColor && Record[x][y + 1] == (Max[x][y + 1] - 1) ) sum++;
+    }
+
+    return sum;
+}
+
+void Student::makeMove(int Record[5][6], int Max[5][6], Color color[5][6], Color inputColor){
+    Color counterColor = counter(inputColor);
+    int sum;
+    int maxScore = -1000;
+    int max_x = x, max_y = y;
+    // Your Code
+    for(int i = 0; i<5; i++) {
+        for(int j = 0; j<6; j++) {
+            Score[i][j] = 0;
+            if(color[i][j] == inputColor) {
+                if(Record[i][j] == (Max[i][j] - 1) ) {// is critical
+                    sum = surroundCritical(i, j, Record, Max, color, inputColor, counterColor);
+                    Score[i][j] += sum * 10;
+                } else {
+                    sum = surroundCritical(i, j, Record, Max, color, inputColor, counterColor);
+                    Score[i][j] -= sum * 10;
+                    Score[i][j] -= (Max[i][j] - Record[i][j]) * 5;
+                }
+            } else if(color[i][j] == White) {
+                sum = surroundCritical(i, j, Record, Max, color, inputColor, counterColor);
+                Score[i][j] -= sum * 10;
+                Score[i][j] += evaluate(i, j, Record, Max, color, inputColor, counterColor);
+            } else {
+                Score[i][j] -= 1000;
+            }
+            
+            if(Score[i][j] > maxScore) {
+                maxScore = Score[i][j];
+                max_x = i;
+                max_y = j;
+            }
+        }
+    }
+    x = max_x;
+    y = max_y;
+}
